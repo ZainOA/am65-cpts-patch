@@ -8,14 +8,14 @@
 +/*
 +* Change the frequency of GENF for static mapping
 +* according to the ti,pps property in DTS. 
-+* For example 1 kHz = 0.001 Hz:
++* For example 2.2 kHz = 0.0022 Hz:
 +* 	SECONDOFPERIOD 0
-+*	NANOSECONDOFPERIOD 100000000
++*	NANOSECONDOFPERIOD 22000000
 +* This is because the variables in the struct ptp_clock_time are not declared as float (better).
 +* Finally, the sum of SECONDOFPERIOD and NANOSECONDOFPERIOD is made into timespec64_to_ns().
 + */
-+ #define SECONDOFPERIOD 2
-+ #define NANOSECONDOFPERIOD 200000000
++ #define SECONDOFPERIOD 0
++ #define NANOSECONDOFPERIOD 1000000
   
   enum {
  	 AM65_CPTS_EV_PUSH,	/* Time Stamp Push Event */
