@@ -1,0 +1,39 @@
+--- drivers/net/ethernet/ti/am65-cpts.c	2025-03-01 11:47:58.355830059 +0100
++++ drivers/net/ethernet/ti/am65-cpts.c	2025-03-01 11:47:19.624225852 +0100
+@@ -127,6 +127,18 @@
+  /* EVENT_2_REG */
+  #define AM65_CPTS_EVENT_2_REG_DOMAIN_MASK	(0xFF)
+  #define AM65_CPTS_EVENT_2_REG_DOMAIN_SHIFT	(0)
++
++/*
++* Change the frequency of GENF for static mapping
++* according to the ti,pps property in DTS. 
++* For example 1 kHz = 0.001 Hz:
++* 	SECONDOFPERIOD 0
++*	NANOSECONDOFPERIOD 100000000
++* This is because the variables in the struct ptp_clock_time are not declared as float (better).
++* Finally, the sum of SECONDOFPERIOD and NANOSECONDOFPERIOD is made into timespec64_to_ns().
++ */
++ #define SECONDOFPERIOD 2
++ #define NANOSECONDOFPERIOD 200000000
+  
+  enum {
+ 	 AM65_CPTS_EV_PUSH,	/* Time Stamp Push Event */
+@@ -704,8 +716,8 @@
+  
+ 		 ns = am65_cpts_gettime(cpts, NULL);
+ 		 ts = ns_to_timespec64(ns);
+-		 rq.perout.period.sec = 1;
+-		 rq.perout.period.nsec = 0;
++		 rq.perout.period.sec = SECONDOFPERIOD;
++		 rq.perout.period.nsec = NANOSECONDOFPERIOD;
+ 		 rq.perout.start.sec = ts.tv_sec + 2;
+ 		 rq.perout.start.nsec = 0;
+ 		 rq.perout.index = cpts->pps_genf_idx;
+@@ -1316,4 +1328,4 @@
+  
+  MODULE_LICENSE("GPL v2");
+  MODULE_AUTHOR("Grygorii Strashko <grygorii.strashko@ti.com>");
+- MODULE_DESCRIPTION("TI K3 AM65 CPTS driver");
+\ No newline at end of file
++ MODULE_DESCRIPTION("TI K3 AM65 CPTS driver");
